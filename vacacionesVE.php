@@ -10,7 +10,7 @@ require('utils.php');
  * @license: GNU GPL v3,  Licencia Pública General de GNU 3.
  * @license: CC BY-SA, Creative Commons Atribución - CompartirIgual (CC BY-SA) 4.0 Internacional.
  * @category Librería.
- * @package: vacacionesVE.php.
+ * @package: vacacionesVE.php
  * @since: v0.3.
  * @version: 0.7.
  */
@@ -21,6 +21,7 @@ class vacacionesVE
 	public $atrDiasVacaciones = 15; // días correspondientes de vacaciones según la LOTTT
 	public $atrTipoPersona = "R"; // tipo de persona Regular o Funcionario
 	public $atrFechaIngreso, $atrAntiguedad;
+
 	/**
 	 * @param string $setFechaIngreso, Fecha de ingreso en formato YYYY-mm-dd
 	 * @param string $setTipoPersona, Regular o funcionario.
@@ -38,6 +39,7 @@ class vacacionesVE
 		}
 	} // cierre del constructor
 
+
 	/**
 	 * @param string $setFechaIngreso, Fecha de ingreso en formato YYYY-mm-dd
 	 */
@@ -49,7 +51,8 @@ class vacacionesVE
 			$setFechaIngreso = $setFechaIngreso . "-" . $diaMes;
 		}
 		$this->atrFechaIngreso = trim($setFechaIngreso);
-	}
+	} // cierre de la función
+
 
 	private function setAsignarValoresFuncionario()
 	{
@@ -57,6 +60,7 @@ class vacacionesVE
         $this->atrPeriodo = 5; // cada 5 años
         $this->atrTipoPeriodo = "Quinquenio"; // cada 5 años
     } // cierre de la función
+
 
 	/**
 	 * @param string $fechaIngreso Fecha de inicio en formato YYYY-mm-dd
@@ -80,14 +84,14 @@ class vacacionesVE
 		unset($objFecha_Ingreso, $objFecha_Periodo, $objAnos);
 		return $liAntiguedad;
 	} // cierre de la función
-
 	public function getAntiguedad($fechaIngreso = "", $fechaPeriodo = "")
 	{
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
 			$fechaIngreso = $this->atrFechaIngreso;
 		}
 		return self::_getAntiguedad($fechaIngreso, $fechaPeriodo);
-	}
+	} // cierre de la función
+
 
 	/**
 	 * La formula es 15 + (años de servicio -1)
@@ -103,13 +107,129 @@ class vacacionesVE
 		}
 		return $liDiasAntiguedad;
 	} // cierre de la función
-
 	public function getDiasVacacionesAntiguedad($piAntiguedad = "") {
 		if (trim($piAntiguedad) == "") {
 			$piAntiguedad = $this->getAntiguedad($this->atrFechaIngreso);
 		}
 		return self::_getDiasVacacionesAntiguedad($piAntiguedad);
-	}
+	} // cierre de la función
+
+
+	/**
+	 * Calcula la cantidad total acumulada de dias segun la antiguedad
+	 */
+	static public function _getDiasTotalesAntiguedad($antiguedad)
+	{
+		$antiguedad = intval(trim($antiguedad));
+		$diasAcumuladoAntiguedad = 0;
+
+		for ($i = 1; $i <= $antiguedad; $i++) {
+			$diasAcumuladoAntiguedad = $diasAcumuladoAntiguedad + self::_getDiasVacacionesAntiguedad($i);
+		}
+
+		return $diasAcumuladoAntiguedad;
+	} // cierre de la función
+
+
+	static public function _getDetalleVacacionesPeriodo(
+		$psFechaIngreso, $paPeriodos = array()
+	)
+	{
+		$lsDia = self::getFechaFormato($psFechaIngreso, "amd", "d");
+		$lsMes = self::getFechaFormato($psFechaIngreso, "amd", "m");
+
+		if (! is_array($paPeriodos)) {
+			// separa la palabra en cada quien y convierte el string en arreglo
+			$paPeriodos = explode("-", $paPeriodos);
+		}
+
+		$liCont = 1;
+		$lsVacaciones = 0;
+		$arrRetorno = array();
+		if (count($paPeriodos) <= 0) {
+			$liCont = -1;
+		}
+		foreach ($paPeriodos as $key => $value) {
+
+			// $value = explode("-", $value);
+
+			$antiguedad = self::_getAntiguedad($psFechaIngreso, ($value + 1) . "-" . $lsMes . "-" . $lsDia);
+			// $antiguedad = self::_getAntiguedad($psFechaIngreso, ($value + 2) . "-" . $lsMes . "-" . $lsDia);
+
+			$diasvacaciones = self::_getDiasVacacionesAntiguedad($antiguedad);
+
+			$arrRetorno["periodo"][$liCont]["anno"] = $value;
+			$arrRetorno["periodo"][$liCont]["dias"] = $diasvacaciones;
+			$arrRetorno["periodo"][$liCont]["antiguedad"] = $antiguedad;
+			$arrRetorno["periodo"][$liCont]["periodos"] = $value . "-" . ($value + 1);
+			$lsVacaciones = $lsVacaciones + $diasvacaciones;
+			$liCont ++;
+		}
+
+		$arrRetorno["dias_vacaciones"] = $lsVacaciones;
+		return $arrRetorno;
+	} // cierre de la función
+	public function getDetalleVacacionesPeriodo(
+		$fechaIngreso = "", $periodos = array()
+	)
+	{
+		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
+			$fechaIngreso = $this->atrFechaIngreso;
+		}
+		return self::_getDetalleVacacionesPeriodo($fechaIngreso, $periodos);
+	} // cierre de la función
+
+
+	static public function getPeriodosAntiguedad($psFechaIngreso)
+	{
+		//$lsAno = substr($psFechaIngreso, 0, 4);
+		$lsAno = self::getFechaFormato($psFechaIngreso, "amd", "a");
+		$liAntiguedad = self::getAntiguedad($psFechaIngreso);
+
+		$arrRetorno = array();
+		if ($liAntiguedad > 0) {
+			for ($liControl = 0; $liControl  <= $liAntiguedad; $liControl ++) {
+				$arrRetorno[$liControl] = $lsAno + $liControl;
+			}
+		}
+		return $arrRetorno;
+	} // cierre de la función
+
+
+	public function getListarPeriodos($paPeriodosUsados = array())
+	{
+		if (! is_array($paPeriodosUsados)) {
+			// separa la palabra en cada quien y convierte el string en arreglo
+			if (strpos($paPeriodosUsados, "/"))
+				$paPeriodosUsados = explode("/", $paPeriodosUsados);
+			else
+				$paPeriodosUsados = explode("-", $paPeriodosUsados);
+		}
+
+		$arrPeriodos = $this->getPeriodosAntiguedad($this->atrFechaIngreso);
+		$arrComparado = array_diff($arrPeriodos, $paPeriodosUsados);
+		$arrRetorno = array();
+		if ($arrComparado) {
+			$arrComparado = array_slice(
+				array_diff(
+					$arrPeriodos,
+					$paPeriodosUsados
+				),
+				0,
+				$this->atrMaxPeriodo
+			);
+			$liCont = 0;
+
+			foreach ($arrComparado AS $key => $value) {
+				if ($liCont > 0)
+					$value = $arrComparado[($liCont-1)] . "-" . $value;
+					$arrRetorno[$liCont] = $value;
+				$liCont++;
+			}
+		}
+		return $arrRetorno;
+	} // cierre de la función
+
 }
 
 ?>
