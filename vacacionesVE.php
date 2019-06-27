@@ -129,7 +129,12 @@ class vacacionesVE
 
 		return $diasAcumuladoAntiguedad;
 	} // cierre de la función
-
+	public function getDiasTotalesAntiguedad($antiguedad = "") {
+		if ($antiguedad == NULL || $antiguedad == "") {
+			$antiguedad = $this->atrAntiguedad;
+		}
+		return self::_getDiasTotalesAntiguedad($antiguedad);
+	}
 
 	static public function _getDetalleVacacionesPeriodo(
 		$psFechaIngreso, $paPeriodos = array()
@@ -150,9 +155,7 @@ class vacacionesVE
 			$liCont = -1;
 		}
 		foreach ($paPeriodos as $key => $value) {
-
 			// $value = explode("-", $value);
-
 			$antiguedad = self::_getAntiguedad($psFechaIngreso, ($value + 1) . "-" . $lsMes . "-" . $lsDia);
 			// $antiguedad = self::_getAntiguedad($psFechaIngreso, ($value + 2) . "-" . $lsMes . "-" . $lsDia);
 
@@ -180,19 +183,24 @@ class vacacionesVE
 	} // cierre de la función
 
 
-	static public function getPeriodosAntiguedad($psFechaIngreso)
+	static public function _getPeriodosAntiguedad($fechaIngreso)
 	{
-		//$lsAno = substr($psFechaIngreso, 0, 4);
-		$lsAno = self::getFechaFormato($psFechaIngreso, "amd", "a");
-		$liAntiguedad = self::getAntiguedad($psFechaIngreso);
+		$year = self::getFechaFormato($fechaIngreso, "amd", "a");
+		$antiguedad = self::_getAntiguedad($fechaIngreso);
 
-		$arrRetorno = array();
-		if ($liAntiguedad > 0) {
-			for ($liControl = 0; $liControl  <= $liAntiguedad; $liControl ++) {
-				$arrRetorno[$liControl] = $lsAno + $liControl;
+		$periodos = array();
+		if ($antiguedad > 0) {
+			for ($i = 0; $i  <= $antiguedad - 1; $i ++) {
+				$periodos[$i] = ($year + $i) . "-" . ($year + $i + 1);
 			}
 		}
-		return $arrRetorno;
+		return $periodos;
+	} // cierre de la función
+	public function getPeriodosAntiguedad($fechaIngreso = "") {
+		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
+			$fechaIngreso = $this->atrFechaIngreso;
+		}
+		return self::_getPeriodosAntiguedad($fechaIngreso);
 	} // cierre de la función
 
 

@@ -29,6 +29,10 @@ switch ($opcion) {
 	case 'diasTotalesAntiguedad':
 		calcularDiasTotalesAntiguedad();
 		break;
+
+	case 'listarPeriodosTotales':
+		listarPeriodosTotales();
+		break;
 } // cierre del switch
 
 
@@ -41,4 +45,13 @@ function calcularAntiguedad() {
 function calcularDiasTotalesAntiguedad() {
 	$diasAntiguedad = vacacionesVE::_getDiasTotalesAntiguedad($_POST["setAntiguedad"]);
 	echo $diasAntiguedad;
+}
+
+function listarPeriodosTotales() {
+	$periodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);
+
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 2000 05:00:00 GMT');
+	header('Content-type: application/json');
+	echo json_encode($periodos);
 }
