@@ -11,10 +11,12 @@ ini_set("display_startup_errors", "On");
 
 include("../vacacionesVE.php");
 
-if (isset($_POST["setOpcion"]))
+if (isset($_POST["setOpcion"])) {
 	$opcion = $_POST["setOpcion"];
-else
+}
+else {
 	$opcion = NULL;
+}
 
 
 /**
@@ -22,8 +24,12 @@ else
  * @param string $opcion, POST enviado ya satinado
  **/
 switch ($opcion) {
-	case 'Antiguedad':
+	case 'antiguedad':
 		calcularAntiguedad();
+		break;
+
+	case 'diasPeriodo':
+		calcularDiasPeriodo();
 		break;
 
 	case 'diasTotalesAntiguedad':
@@ -46,6 +52,7 @@ function calcularDiasTotalesAntiguedad() {
 	$diasAntiguedad = vacacionesVE::_getDiasTotalesAntiguedad($_POST["setAntiguedad"]);
 	echo $diasAntiguedad;
 }
+
 
 function listarPeriodosTotales() {
 	$periodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);

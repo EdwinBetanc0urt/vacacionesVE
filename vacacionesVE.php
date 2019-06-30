@@ -208,10 +208,12 @@ class vacacionesVE
 	{
 		if (! is_array($paPeriodosUsados)) {
 			// separa la palabra en cada quien y convierte el string en arreglo
-			if (strpos($paPeriodosUsados, "/"))
+			if (strpos($paPeriodosUsados, "/")) {
 				$paPeriodosUsados = explode("/", $paPeriodosUsados);
-			else
+			}
+			else {
 				$paPeriodosUsados = explode("-", $paPeriodosUsados);
+			}
 		}
 
 		$arrPeriodos = $this->getPeriodosAntiguedad($this->atrFechaIngreso);
@@ -229,9 +231,10 @@ class vacacionesVE
 			$liCont = 0;
 
 			foreach ($arrComparado AS $key => $value) {
-				if ($liCont > 0)
+				if ($liCont > 0) {
 					$value = $arrComparado[($liCont-1)] . "-" . $value;
 					$arrRetorno[$liCont] = $value;
+				}
 				$liCont++;
 			}
 		}

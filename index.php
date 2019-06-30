@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <title>VacacionesVE, Calculo de vacaciones para Venezuela</title>
+    <title>
+      VacacionesVE, Calculo de vacaciones para Venezuela
+    </title>
     <meta charset="UTF-8">
     <meta name="title" content="EdwinBetanc0urt GitHub Pages">
     <meta name="description" content="EdwinBetanc0urt GitHub Pages">
@@ -37,12 +39,18 @@
               <label for="fechaReingreso">Fecha Reingreso Vacacional</label>
               <input type="date" id="fechaReingreso" class="form-control" />
             </div>
+
             <div class="form-group col-6">
               <label for="fechaReingreso">
                 Periodos a seleccionar para el disfrute vacacional (maximo 2)
               </label>
-              <select id="periodos" class="form-control">
+              <select id="periodos" class="form-control" multiple>
+                <option value="">Seleccione una opcion</option>
               </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="diasPeriodo">Dias en el periodo:</label>
+              <input type="number" id="diasPeriodo" class="form-control" />
             </div>
           </div>
 
