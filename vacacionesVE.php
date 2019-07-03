@@ -21,6 +21,7 @@ class vacacionesVE
 	public $atrDiasVacaciones = 15; // días correspondientes de vacaciones según la LOTTT
 	public $atrTipoPersona = "R"; // tipo de persona Regular o Funcionario
 	public $atrFechaIngreso, $atrAntiguedad;
+	public static $maxPeriodos = 2;
 
 	/**
 	 * @param string $setFechaIngreso, Fecha de ingreso en formato YYYY-mm-dd
@@ -29,7 +30,7 @@ class vacacionesVE
 	function __construct($setFechaIngreso = "", $setTipoPersona = "R")
 	{
 		$this->atrTipoPersona = trim($setTipoPersona);
-        $this->atrMaxPeriodo = 2; // máximo acumulado 2 periodos art 199 LOTTT y 1 o no acumulativo art 19 LCA
+        $this->atrMaxPeriodo = self::$maxPeriodos; // máximo acumulado 2 periodos art 199 LOTTT y 1 o no acumulativo art 19 LCA
         $this->atrPeriodo = 1; // cada año
         $this->atrTipoPeriodo = "Año(s)"; // cada año
 

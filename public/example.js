@@ -5,7 +5,7 @@ var	controllerPath = 'controller/example.php';
 $(function() {
     $('#fechaIngreso').on('change', function () {
         calcularAntiguedad(this.value);
-        listarPeriodosTotales(this.value);
+        listarPeriodosDisponibles(this.value);
     });
 
     $('#antiguedad').on('change', function () {
@@ -50,8 +50,15 @@ $(function() {
     });
 
     $('#diasPeriodo').on('change', function () {
-        // fechaFinal(this.value);
-        // fechaReingreso(this.value);
+        if (this.value != '' && $('#fechaInicio').val() != '') {
+            fechaFinal($('#fechaInicio').val(), this.value);
+        }
+    });
+
+    $('#fechaInicio').on('change', function () {
+        if (this.value != '' && $('#diasPeriodo').val() != '') {
+            fechaFinal(this.value, $('#diasPeriodo').val());
+        }
     });
 });
 
@@ -140,10 +147,10 @@ function diasTotalesAntiguedad(antiguedad = 0) {
 } // cierre de la función
 
 
-function listarPeriodosTotales(fechaIngreso = '') {
+function listarPeriodosDisponibles(fechaIngreso = '') {
     if (fechaIngreso.trim() !== '') {
         $.post(controllerPath, {
-                setOpcion: 'listarPeriodosTotales',
+                setOpcion: 'listarPeriodosDisponibles',
                 setFechaIngreso: fechaIngreso
             },
             function (response) {
@@ -175,3 +182,18 @@ function listarPeriodosTotales(fechaIngreso = '') {
         );
     }
 } // cierre de la función
+
+
+function fechaFinal(fechaInicio, diasHabiles) {
+    $.post(controllerPath, {
+            setOpcion: 'calcularFechaFin',
+            setFechaInicio: fechaInicio,
+            setDiasHabiles: diasHabiles
+        },
+        function (response) {
+            if (response) {
+                $('#fechaFin').val(response);
+            }
+        }
+    );
+}

@@ -61,45 +61,47 @@ trait utils {
 	 * @return string $psFechafin Fecha de fin en formato Y-m-d
 	 */
 	static public function getFechaFinal(
-		$fechainicio = "",
+		$fechaInicio = "",
 		$diasHabiles = 0,
-		$diasferiados = array(),
+		$diasFeriados = array(),
 		$diasNoHabiles = array(6,7)
 	)
 	{
 		// obtenemos la fecha de hoy, solo para usar como referencia al usuario
-		if (trim($fechainicio) == "") {
-			$fechainicio = date("Y/m/d");
+		if (trim($fechaInicio) == "") {
+			$fechaInicio = date("Y/m/d");
 		}
 
 		// convirtiendo en timestamp las fechas
-		$fechaInicial =  strtotime($fechainicio);
+		$fechaInicial =  strtotime($fechaInicio);
 		$diasHabiles = intval($diasHabiles);
 		$fechaFinal = 0;
 
 		// 24 horas, por 60 minutos, por 60 segundos
 		$segundosDia = 24*60*60; // 86400
 		$segundos = 0;
-
+		if ($diasHabiles < 0) {
+			return $fechaInicio;
+		}
 		// Creamos un for desde 0 hasta los días enviados envía el día de que
 		// culminan las vacaciones un día hábil adicional para el reingreso
 		//for ($diaRecorrido = 0; $diaRecorrido < $diasHabiles; $diaRecorrido++) {
 		for ($diaRecorrido = 0; $diaRecorrido <= $diasHabiles; $diaRecorrido++) {
-			// Acumulamos la cantidad de segundos que tiene un día en cada vuelta del for
-			$segundos = $segundos + $segundosDia;
-
 			// Comparamos si estamos en sábado o domingo, si es así restamos un dia
 			if (in_array(date("N", $fechaInicial + $segundos), $diasNoHabiles)) {
 				$diaRecorrido--;
 			}
 			// Comparamos si estamos en dia feriado, para restar un dia
-			elseif (in_array(date('Y/m/d', $fechaInicial + $segundos), $diasferiados)) {
+			elseif (in_array(date('Y/m/d', $fechaInicial + $segundos), $diasFeriados)) {
 				$diaRecorrido--;
 			}
 			else {
 				// Si no es sábado o domingo, y el for termina y nos muestra la nueva fecha
 				$fechaFinal = date("Y/m/d", $fechaInicial + $segundos);
 			}
+
+			// Acumulamos la cantidad de segundos que tiene un día en cada vuelta del for
+			$segundos = $segundos + $segundosDia;
 		}
 
 		return $fechaFinal;

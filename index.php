@@ -33,7 +33,7 @@
             </div>
             <div class="form-group col-3">
               <label for="fechaFin">Fecha Fin Vacacional</label>
-              <input type="date" id="fechaFin" class="form-control" />
+              <input type="text" id="fechaFin" class="form-control" />
             </div>
             <div class="form-group col-4">
               <label for="fechaReingreso">Fecha Reingreso Vacacional</label>
@@ -53,27 +53,6 @@
               <input type="number" id="diasPeriodo" class="form-control" />
             </div>
           </div>
-
-          <table class="table table-bordered">
-            <tbody>
-              <tr id="filaPeriodos">
-                <td>Check</td>
-                <td>Periodo</td>
-                <td>Dias</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>Dias A disfrutar por periodo:</b><br />
-                  <input type="number" id="diasTotalesPeriodo" class="form-control" />
-                </td>
-                <td>
-                  <b>Dias Totales por Antiguedad:</b><br />
-                  <input type="number" id="diasTotalesAntiguedad" class="form-control" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
           <br /><br />
         </div>
       </div>

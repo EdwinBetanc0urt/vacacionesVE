@@ -39,6 +39,14 @@ switch ($opcion) {
 	case 'listarPeriodosTotales':
 		listarPeriodosTotales();
 		break;
+
+	case 'listarPeriodosDisponibles':
+		listarPeriodosDisponibles();
+		break;
+
+	case 'calcularFechaFin':
+		calcularFechaFin();
+		break;
 } // cierre del switch
 
 
@@ -57,7 +65,6 @@ function calcularDiasTotalesAntiguedad() {
 	echo $diasAntiguedad;
 }
 
-
 function listarPeriodosTotales() {
 	$periodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);
 
@@ -65,4 +72,26 @@ function listarPeriodosTotales() {
 	header('Expires: Mon, 26 Jul 2000 05:00:00 GMT');
 	header('Content-type: application/json');
 	echo json_encode($periodos);
+}
+
+function listarPeriodosDisponibles() {
+	$periodosUtilizados = array(
+		"2013-2014"
+	);
+	$todosPeriodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);
+
+	$periodosNoUtilizados = array_diff($todosPeriodos, $periodosUtilizados);
+	$periodosDisponibles = array_slice($periodosNoUtilizados, 0, vacacionesVE::$maxPeriodos);
+
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 2000 05:00:00 GMT');
+	header('Content-type: application/json');
+	echo json_encode($periodosDisponibles);
+}
+
+
+function calcularFechaFin() {
+	$fechaFin = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"]);
+	echo vacacionesVE::getFechaFormato($fechaFin);
+	// echo $fechaFin;
 }
