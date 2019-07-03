@@ -33,10 +33,10 @@ $(function() {
                     .prop('selected', false);
                 return;
             }
-			calcularDiasPerido($('#antiguedad').val(), periodos);
+			calcularDiasPerido($('#fechaIngreso').val(), periodos);
         } else if (selectedValues.length == 1) {
             if (validarPeriodo(selectedValues[0])) {
-			    calcularDiasPerido($('#antiguedad').val(), selectedValues);
+			    calcularDiasPerido($('#fechaIngreso').val(), selectedValues);
             } else {
                 $('#diasPeriodo').val('');
                 $('#fechaFin').val('');
@@ -100,13 +100,13 @@ function calcularAntiguedad(fechaIngreso = '') {
 
 /**
  * [calcularDiasPerido description]
- * @param   {integer}  antiguedad  [periodos description]
+ * @param   {integer}  fechaIngreso  [fechaIngreso description]
  * @param   {array}  periodos  [periodos description]
  */
-function calcularDiasPerido(antiguedad, periodos) {
+function calcularDiasPerido(fechaIngreso, periodos) {
     $.post(controllerPath, {
         setOpcion: 'diasPeriodo',
-        setAntiguedad: antiguedad,
+        setFechaIngreso: fechaIngreso,
         setPeriodos: periodos
         },
         function (response) {

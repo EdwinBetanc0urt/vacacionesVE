@@ -183,6 +183,26 @@ class vacacionesVE
 	} // cierre de la función
 
 
+	static public function _getDiasPeriodos($fechaIngreso, $periodos) {
+		$antiguedad = 1;
+		$diasVacaciones = 0;
+		$todosPeriodos = self::_getPeriodosAntiguedad($fechaIngreso);
+
+		foreach ($todosPeriodos as $key => $periodoItem) {
+			if (in_array($periodoItem, $periodos)) {
+				$diasVacaciones = self::_getDiasVacacionesAntiguedad($antiguedad) + $diasVacaciones;
+			}
+			$antiguedad++;
+		}
+		return $diasVacaciones;
+	}
+	public function getDiasPeriodos($fechaIngreso = "", $periodos) {
+		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
+			$fechaIngreso = $this->atrFechaIngreso;
+		}
+		return self::_getDiasPeriodos($fechaIngreso, $periodos);
+	}
+
 	static public function _getPeriodosAntiguedad($fechaIngreso)
 	{
 		$year = self::getFechaFormato($fechaIngreso, "amd", "a");

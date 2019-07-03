@@ -47,6 +47,10 @@ function calcularAntiguedad() {
 	echo $antiguedad;
 }
 
+function calcularDiasPeriodo() {
+	$diasPeriodo = vacacionesVE::_getDiasPeriodos($_POST["setFechaIngreso"], $_POST["setPeriodos"]);
+	echo $diasPeriodo;
+}
 
 function calcularDiasTotalesAntiguedad() {
 	$diasAntiguedad = vacacionesVE::_getDiasTotalesAntiguedad($_POST["setAntiguedad"]);
