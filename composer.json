@@ -1,0 +1,11 @@
+{
+    "name": "edwinbetanc0urt/vacaciones-ve",
+    "description": "Libreria para el calculo vacacional",
+    "keywords": ["php", "vacaciones", "vacancy", "holydays", "ve", "venezuela"],
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.6"
+    }
+}
