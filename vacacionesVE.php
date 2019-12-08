@@ -7,9 +7,8 @@ require('utils.php');
  *
  * Clase PHP para obtener los cálculos relacionados a vacaciones
  * @author: Edwin Betancourt <EdwinBetanc0urt@outlook.com>
- * @license: GNU GPL v3,  Licencia Pública General de GNU 3.
- * @license: CC BY-SA, Creative Commons Atribución - CompartirIgual (CC BY-SA) 4.0 Internacional.
- * @category Librería.
+ * @license: MIT License.
+ * @category library.
  * @package: vacacionesVE.php
  * @since: v0.3.
  * @version: 0.7.
@@ -117,7 +116,7 @@ class vacacionesVE
 
 
 	/**
-	 * Calcula la cantidad total acumulada de dias segun la antiguedad
+	 * Calcula la cantidad total acumulada de días según la antigüedad
 	 */
 	static public function _getDiasTotalesAntiguedad($antiguedad)
 	{
