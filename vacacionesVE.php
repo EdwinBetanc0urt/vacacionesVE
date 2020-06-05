@@ -26,7 +26,7 @@ class vacacionesVE
 	 * @param string $setFechaIngreso, Fecha de ingreso en formato YYYY-mm-dd
 	 * @param string $setTipoPersona, Regular o funcionario.
 	 */
-	function __construct($setFechaIngreso = "", $setTipoPersona = "R")
+	function __construct($setFechaIngreso = "", $setTipoPersona = "R") 
 	{
 		$this->atrTipoPersona = trim($setTipoPersona);
         $this->atrMaxPeriodo = self::$maxPeriodos; // máximo acumulado 2 periodos art 199 LOTTT y 1 o no acumulativo art 19 LCA
@@ -84,6 +84,7 @@ class vacacionesVE
 		unset($objFecha_Ingreso, $objFecha_Periodo, $objAnos);
 		return $liAntiguedad;
 	} // cierre de la función
+
 	public function getAntiguedad($fechaIngreso = "", $fechaPeriodo = "")
 	{
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
@@ -107,6 +108,7 @@ class vacacionesVE
 		}
 		return $liDiasAntiguedad;
 	} // cierre de la función
+
 	public function getDiasVacacionesAntiguedad($piAntiguedad = "") {
 		if (trim($piAntiguedad) == "") {
 			$piAntiguedad = $this->getAntiguedad($this->atrFechaIngreso);
@@ -129,6 +131,7 @@ class vacacionesVE
 
 		return $diasAcumuladoAntiguedad;
 	} // cierre de la función
+
 	public function getDiasTotalesAntiguedad($antiguedad = "") {
 		if ($antiguedad == NULL || $antiguedad == "") {
 			$antiguedad = $this->atrAntiguedad;
@@ -172,6 +175,7 @@ class vacacionesVE
 		$arrRetorno["dias_vacaciones"] = $lsVacaciones;
 		return $arrRetorno;
 	} // cierre de la función
+
 	public function getDetalleVacacionesPeriodo(
 		$fechaIngreso = "", $periodos = array()
 	)
@@ -196,6 +200,7 @@ class vacacionesVE
 		}
 		return $diasVacaciones;
 	}
+
 	public function getDiasPeriodos($fechaIngreso = "", $periodos) {
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
 			$fechaIngreso = $this->atrFechaIngreso;
@@ -216,6 +221,7 @@ class vacacionesVE
 		}
 		return $periodos;
 	} // cierre de la función
+
 	public function getPeriodosAntiguedad($fechaIngreso = "") {
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
 			$fechaIngreso = $this->atrFechaIngreso;

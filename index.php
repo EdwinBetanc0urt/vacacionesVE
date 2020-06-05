@@ -16,15 +16,20 @@
         <br />
         <h1>VacacionesVE, Calculo de vacaciones para Venezuela.</h1>
         <br />
+
         <div class="form-row align-items-center">
           <div class="row">
-            <div class="form-group col-12 col-sm-6">
+            <div class="form-group col-4 col-sm-4">
               <label for="fechaIngreso">Fecha Ingreso</label>
               <input type="date" id="fechaIngreso" class="form-control" />
             </div>
-            <div class="form-group col-6 col-sm-6">
+            <div class="form-group col-4 col-sm-4">
               <label for="antiguedad">Antigüedad (años)</label>
               <input type="number" id="antiguedad" class="form-control" />
+            </div>
+            <div class="form-group col-4 col-sm-4">
+              <label for="diasTotalesAntiguedad">Días Totales (por antigüedad)</label>
+              <input type="number" id="diasTotalesAntiguedad" class="form-control" />
             </div>
 
             <div class="form-group col-3">
@@ -42,17 +47,18 @@
 
             <div class="form-group col-6">
               <label for="fechaReingreso">
-                Periodos a seleccionar para el disfrute vacacional (maximo 2)
+                Periodos a seleccionar para el disfrute vacacional (máximo 2)
               </label>
               <select id="periodos" class="form-control" multiple>
-                <option value="">Seleccione una opcion</option>
+                <option value="">Seleccione una opción</option>
               </select>
             </div>
             <div class="form-group col-6">
-              <label for="diasPeriodo">Dias en el periodo:</label>
+              <label for="diasPeriodo">Días en el periodo:</label>
               <input type="number" id="diasPeriodo" class="form-control" />
             </div>
           </div>
+
           <br /><br />
         </div>
       </div>
