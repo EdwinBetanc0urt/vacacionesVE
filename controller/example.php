@@ -84,8 +84,8 @@ function listarPeriodosDisponibles() {
 
 
 function calcularFechaFin() {
-	$fechaFin = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"]);
-	printValues(vacacionesVE::getFechaFormato($fechaFin));
+	$endDate = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"]);
+	printValues($endDate);
 }
 
 function printValues($valueToPrint) {

@@ -26,7 +26,7 @@ class vacacionesVE
 	 * @param string $setFechaIngreso, Fecha de ingreso en formato YYYY-mm-dd
 	 * @param string $setTipoPersona, Regular o funcionario.
 	 */
-	function __construct($setFechaIngreso = "", $setTipoPersona = "R") 
+	function __construct($setFechaIngreso = "", $setTipoPersona = "R")
 	{
 		$this->atrTipoPersona = trim($setTipoPersona);
         $this->atrMaxPeriodo = self::$maxPeriodos; // máximo acumulado 2 periodos art 199 LOTTT y 1 o no acumulativo art 19 LCA
@@ -104,7 +104,7 @@ class vacacionesVE
 		//$liDiasAntiguedad = $this->atrDiasVacaciones + ($piAntiguedad - 1);
 		$liDiasAntiguedad = 15 + ($piAntiguedad - 1);
 		if ($liDiasAntiguedad > 30) {
-			$liDiasAntiguedad = 30;
+			return 30;
 		}
 		return $liDiasAntiguedad;
 	} // cierre de la función
@@ -148,7 +148,12 @@ class vacacionesVE
 
 		if (! is_array($paPeriodos)) {
 			// separa la palabra en cada quien y convierte el string en arreglo
-			$paPeriodos = explode("-", $paPeriodos);
+			if (strpos($paPeriodos, "/")) {
+				$paPeriodos = explode("/", $paPeriodos);
+			}
+			else {
+				$paPeriodos = explode("-", $paPeriodos);
+			}
 		}
 
 		$liCont = 1;
@@ -191,6 +196,15 @@ class vacacionesVE
 		$antiguedad = 1;
 		$diasVacaciones = 0;
 		$todosPeriodos = self::_getPeriodosAntiguedad($fechaIngreso);
+
+		if (! is_array($periodos)) {
+			// separa la palabra en cada quien y convierte el string en arreglo
+			$periodos = explode(",", $periodos);
+		}
+		if (! is_array($periodos)) {
+			// separa la palabra en cada quien y convierte el string en arreglo
+			$periodos = explode(" ", $periodos);
+		}
 
 		foreach ($todosPeriodos as $key => $periodoItem) {
 			if (in_array($periodoItem, $periodos)) {
