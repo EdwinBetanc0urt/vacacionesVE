@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const clearValues = function() {
 				document.getElementById('diasPeriodo').value = '';
 				document.getElementById('fechaFin').value = '';
-				document.getElementById('fechaReingreso').value = '';
+				document.getElementById('fechaIncorporacion').value = '';
 			}
 
 			const selectedList = document.querySelectorAll('#periodos option:checked');
@@ -293,8 +293,11 @@ function endDate(startDate, diasHabiles) {
 	})
 	.then(returnResponse)
 	.then(function(data) {
-		data = data.replace(/[/]/g, '-');
-		document.getElementById('fechaFin').value = data;
+		const endDate = data.endDate.replace(/[/]/g, '-');
+		const incorporationDate = data.incorporationDate.replace(/[/]/g, '-');
+
+		document.getElementById('fechaFin').value = endDate;
+		document.getElementById('fechaIncorporacion').value = incorporationDate;
 	})
 	.catch(function(error) {
 		console.error(error);
