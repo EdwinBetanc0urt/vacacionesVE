@@ -78,7 +78,7 @@ trait utils {
 		$fechaFinal = 0;
 
 		// 24 horas, por 60 minutos, por 60 segundos
-		$segundosDia = 24*60*60; // 86400
+		$segundosDia = 86400; // 24 * 60 * 60
 		$segundos = 0;
 		if ($diasHabiles < 0) {
 			return $fechaInicio;

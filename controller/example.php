@@ -1,91 +1,100 @@
 <?php
-// Localización español
+// Spanish localization
 setlocale(LC_ALL, "es_VE.UTF-8", "es_VE", "spanish");
 date_default_timezone_set("America/Caracas");
 ini_set("default_charset", "utf-8");
 
-define("ERRORES", E_ALL | E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-error_reporting(ERRORES);
+define("ERRORS", E_ALL | E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+error_reporting(ERRORS);
 ini_set("display_errors", "On");
 ini_set("display_startup_errors", "On");
 
 include("../vacacionesVE.php");
 
-if (isset($_POST["setOpcion"])) {
-	$opcion = $_POST["setOpcion"];
+if (isset($_POST["getRequest"])) {
+	$option = $_POST["getRequest"];
 }
 else {
-	$opcion = NULL;
+	$option = NULL;
 }
 
 
 /**
- * @description: Condicional según una variable enviada por POST ejecuta su función
- * @param string $opcion, POST enviado ya satinado
+ * @description: Conditional according to a variable sent by POST executes its function
+ * @param string $option, POST sent already satin
  **/
-switch ($opcion) {
-	case 'antiguedad':
-		calcularAntiguedad();
+switch ($option) {
+	case 'antiquity':
+		calculateAntiquity();
 		break;
 
-	case 'diasPeriodo':
-		calcularDiasPeriodo();
+	case 'daysForPeriods':
+		calculateDaysForPeriods();
 		break;
 
-	case 'diasTotalesAntiguedad':
-		calcularDiasTotalesAntiguedad();
+	case 'totalDaysForAntiquity':
+		calculateTotalDaysForAntiquity();
 		break;
 
-	case 'listarPeriodosTotales':
-		listarPeriodosTotales();
+	case 'availablePeriods':
+		listAvailablePeriods();
 		break;
 
-	case 'listarPeriodosDisponibles':
-		listarPeriodosDisponibles();
+	case 'calculateEndDate':
+		calculateEndDate();
 		break;
-
-	case 'calcularFechaFin':
-		calcularFechaFin();
-		break;
-} // cierre del switch
+} // end of switch
 
 
-function calcularAntiguedad() {
-	$antiguedad = vacacionesVE::_getAntiguedad($_POST["setFechaIngreso"]);
-	printValues($antiguedad);
-}
-
-function calcularDiasPeriodo() {
-	$diasPeriodo = vacacionesVE::_getDiasPeriodos($_POST["setFechaIngreso"], $_POST["setPeriodos"]);
-	printValues($diasPeriodo);
-}
-
-function calcularDiasTotalesAntiguedad() {
-	$diasAntiguedad = vacacionesVE::_getDiasTotalesAntiguedad($_POST["setAntiguedad"]);
-	printValues($diasAntiguedad);
-}
-
-function listarPeriodosTotales() {
-	$periodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);
-	printValues($periodos);
-}
-
-function listarPeriodosDisponibles() {
-	$periodosUtilizados = array(
-		"2013-2014"
+function calculateAntiquity() {
+	$antiquity = vacacionesVE::_getAntiguedad(
+		$_POST["setDateOfAdmission"]
 	);
-	$todosPeriodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);
-
-	$periodosNoUtilizados = array_diff($todosPeriodos, $periodosUtilizados);
-	$periodosDisponibles = array_slice($periodosNoUtilizados, 0, vacacionesVE::$maxPeriodos);
-
-	printValues($periodosDisponibles);
+	printValues($antiquity);
 }
 
+function calculateDaysForPeriods() {
+	$daysOfPeriods = vacacionesVE::_getDiasPeriodos(
+		$_POST["setDateOfAdmission"],
+		$_POST["setPeriodsList"]
+	);
+	printValues($daysOfPeriods);
+}
 
-function calcularFechaFin() {
-	$endDate = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"]);
-	$incorporationDate = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"] + 1);
+function calculateTotalDaysForAntiquity() {
+	$totalDaysForAntiquity = vacacionesVE::_getDiasTotalesAntiguedad(
+		$_POST["setAntiquity"]
+	);
+	printValues($totalDaysForAntiquity);
+}
+
+function listAvailablePeriods() {
+	$periodsUsed = array(
+		"2017-2018"
+	);
+	$allPeriods = vacacionesVE::_getPeriodosAntiguedad(
+		$_POST["setDateOfAdmission"]
+	);
+
+	$periodsNotUsed = array_diff($allPeriods, $periodsUsed);
+	$availablePeriods = array_slice($periodsNotUsed, 0, vacacionesVE::$maxPeriodos);
+
+	printValues($availablePeriods);
+}
+
+function calculateEndDate() {
+	$feastDay = array(); // format YY-mm-dd
+
+	$endDate = vacacionesVE::getFechaFinal(
+		$_POST["setHolidayStartDate"],
+		$_POST["setBusinessDays"],
+		$feastDay
+	);
+	$incorporationDate = vacacionesVE::getFechaFinal(
+		$_POST["setHolidayStartDate"],
+		$_POST["setBusinessDays"] + 1,
+		$feastDay
+	);
 	$sendValues = array(
 		"endDate" => $endDate,
 		"incorporationDate" => $incorporationDate
