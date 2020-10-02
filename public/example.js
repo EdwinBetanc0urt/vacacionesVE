@@ -6,57 +6,61 @@ const returnResponse = function(response) {
 
 // on the load document
 document.addEventListener('DOMContentLoaded', function() {
+	// TODO: Change years with 2 or more steps, send requests at each step
 	addEventSelector({
-		selector: '#fechaIngreso',
+		selector: '#dateOfAdmission',
 		action: function() {
-			calcularAntiguedad(this.value);
-			listarPeriodosDisponibles(this.value);
+			calculateAntiquity(this.value);
+			listAvailablePeriods(this.value);
 		}
 	});
 
 	addEventSelector({
-		selector: '#antiguedad',
+		selector: '#antiquity',
 		action: function() {
-			diasTotalesAntiguedad(this.value);
+			calculateTotalDaysForAntiquity(this.value);
 		}
 	});
 
 	addEventSelector({
-		selector: '#periodos',
+		selector: '#periodsList',
 		action: function() {
 			const selectedValues = [];
 			const clearValues = function() {
-				document.getElementById('diasPeriodo').value = '';
-				document.getElementById('fechaFin').value = '';
-				document.getElementById('fechaIncorporacion').value = '';
+				document.getElementById('daysForSelectedPeriods').value = '';
+				document.getElementById('holidayEndDate').value = '';
+				document.getElementById('incorporationDate').value = '';
 			}
 
-			const selectedList = document.querySelectorAll('#periodos option:checked');
-			// const selectedList = document.getElementById('periodos').selectedOptions;
-			selectedList.forEach(function(element) {
+			// const selectedInList = document.querySelectorAll('#periodsList option:checked');
+			const periodsElement = document.getElementById('periodsList')
+			const selectedInList = Array.from(periodsElement.selectedOptions);
+			selectedInList.forEach(function(element) {
 				selectedValues.push(element.value);
 			});
 
-			const fechaIngreso = document.getElementById('fechaIngreso').value;
+			const dateOfAdmission = document.getElementById('dateOfAdmission').value;
 
 			if (selectedValues.length > 1) {
-				// filtra los valoresde los periodos
-				const periodos = selectedValues.filter(periodoItem => {
+				// filter the values of the periods
+				const periodsList = selectedValues.filter(periodoItem => {
 					return periodoItem != '' && periodoItem != '0';
 				});
 
-				if (periodos.length < 1) {
+				if (periodsList.length < 1) {
 					clearValues();
-					document.querySelectorAll('#periodos option').forEach(function(element) {
+					// const optionsList = document.querySelectorAll('#periodsList option');
+					const optionsList = Array.from(periodsElement.options);
+					optionsList.forEach(function(element) {
 						element.selected = false;
 					});
 					return;
 				}
-				calcularDiasPerido(fechaIngreso, periodos);
+				calculateDaysForPeriods(dateOfAdmission, periodsList);
 				return;
 			} else if (selectedValues.length == 1) {
-				if (validarPeriodo(selectedValues[0])) {
-					calcularDiasPerido(fechaIngreso, selectedValues);
+				if (validatePeriod(selectedValues[0])) {
+					calculateDaysForPeriods(dateOfAdmission, selectedValues);
 				}
 			}
 			clearValues();
@@ -67,30 +71,43 @@ document.addEventListener('DOMContentLoaded', function() {
 		]
 	});
 
+	const endDateEvent = function() {
+		const holidayStartDate = document.getElementById('holidayStartDate').value;
+		const daysPeriod = document.getElementById('daysForSelectedPeriods').value;
+		endDate(holidayStartDate, daysPeriod);
+	};
+
 	addEventSelector({
-		selector: '#diasPeriodo',
-		action: function() {
-			const startDate = document.getElementById('fechaInicio').value;
-			endDate(startDate, this.value);
-		}
+		selector: '#daysForSelectedPeriods',
+		action: endDateEvent
 	});
 
 	addEventSelector({
-		selector: '#fechaInicio',
-		action: function() {
-			const daysPeriod = document.getElementById('diasPeriodo').value;
-			endDate(this.value, daysPeriod);
-		}
+		selector: '#holidayStartDate',
+		action: endDateEvent
 	});
 
 });
 
+/**
+ * Add event to element (or element with selector)
+ * @param {string} selector
+ * @param {object} element
+ * @param {array} eventsList
+ * @param {function} action
+ */
 function addEventSelector({
 	selector,
+	element,
 	eventsList = ['change'],
 	action = function() {}
 }) {
-	const selectorsNodeList = document.querySelectorAll(selector);
+	let selectorsNodeList = [
+		element
+	];
+	if (element === undefined || element === null) {
+		selectorsNodeList = document.querySelectorAll(selector);
+	}
 
 	if (typeof eventsList === 'string') {
 		eventsList = eventsList.split(',');
@@ -98,7 +115,7 @@ function addEventSelector({
 
 	const domElementsLength = selectorsNodeList.length;
 	let domElementsIndex = 0;
-	// iteration elements DOM
+	// iteration DOM elements
 	while (domElementsIndex < domElementsLength) {
 		const selectorNode = selectorsNodeList[domElementsIndex]
 
@@ -117,6 +134,10 @@ function addEventSelector({
 	}
 }
 
+/**
+ * Dispatch evento into element
+ * @param {object} element
+ */
 function dispatchEventRelationship(element) {
   if ('createEvent' in document) {
     const event = document.createEvent('HTMLEvents');
@@ -127,20 +148,20 @@ function dispatchEventRelationship(element) {
   }
 }
 
-function validarPeriodo(periodo) {
+function validatePeriod(periodo) {
 	if (parseInt(periodo) === 0 || periodo === null) {
 		alert(
-			'¡Atención! \n' +
-			'No posee períodos vacacionales aun, hasta no cumplir por lo ' +
-			'menos un (1) año de haber ingresado o de haber usado las ' +
-			'vacaciones no pude solicitar las mismas.'
+			'Attention! \n' +
+			'You do not have vacation periods yet, until you have reached at ' +
+			'least one (1) year of entering or having used the vacation, I ' +
+			'could not request it.'
 		);
 		return false;
 	} else if (periodo.trim() == '') {
 		alert(
-			'¡Atención! \n' +
-			'Debe seleccionar un periodo valido para calcular los días ' +
-			'hábiles de las vacaciones.'
+			'Attention! \n' +
+			'You must select a valid period to calculate the working days of ' +
+			'the vacation.'
 		);
 		return false;
 	}
@@ -148,17 +169,17 @@ function validarPeriodo(periodo) {
 } // end of function
 
 /**
- * calcular Antiguedad
- * @param {string} fechaIngreso
+ * Calculate Antiquity
+ * @param {string} dateOfAdmission
  */
-function calcularAntiguedad(fechaIngreso = '') {
-	if (fechaIngreso.trim() === '' || fechaIngreso === null) {
+function calculateAntiquity(dateOfAdmission = '') {
+	if (dateOfAdmission.trim() === '' || dateOfAdmission === null) {
 		return;
 	}
 
 	const dataSend = new FormData();
-	dataSend.append('setOpcion', 'antiguedad');
-	dataSend.append('setFechaIngreso', fechaIngreso);
+	dataSend.append('getRequest', 'antiquity');
+	dataSend.append('setDateOfAdmission', dateOfAdmission);
 
 	fetch(controllerPath, {
 		method: 'POST',
@@ -167,11 +188,10 @@ function calcularAntiguedad(fechaIngreso = '') {
 	})
 	.then(returnResponse)
 	.then(function(data) {
-		const element = document.getElementById('antiguedad');
+		const element = document.getElementById('antiquity');
 		element.value = data;
 
 		dispatchEventRelationship(element);
-		// diasTotalesAntiguedad(data);
 	})
 	.catch(function(error) {
 		console.error(error);
@@ -179,15 +199,15 @@ function calcularAntiguedad(fechaIngreso = '') {
 } // end of function
 
 /**
- * [calcularDiasPerido description]
- * @param   {number}  fechaIngreso  [fechaIngreso description]
- * @param   {array}  periodos  [periodos description]
+ * [calculateDaysForPeriods description]
+ * @param   {number}  dateOfAdmission
+ * @param   {array}  periodsList  [periodsList description]
  */
-function calcularDiasPerido(fechaIngreso, periodos) {
+function calculateDaysForPeriods(dateOfAdmission, periodsList) {
 	const dataToSend = new FormData();
-	dataToSend.append('setOpcion', 'diasPeriodo');
-	dataToSend.append('setFechaIngreso', fechaIngreso);
-	dataToSend.append('setPeriodos', periodos);
+	dataToSend.append('getRequest', 'daysForPeriods');
+	dataToSend.append('setDateOfAdmission', dateOfAdmission);
+	dataToSend.append('setPeriodsList', periodsList);
 
 	fetch(controllerPath, {
 		method: 'POST',
@@ -195,7 +215,7 @@ function calcularDiasPerido(fechaIngreso, periodos) {
 	})
 	.then(returnResponse)
 	.then(function(data) {
-		const element = document.getElementById('diasPeriodo');
+		const element = document.getElementById('daysForSelectedPeriods');
 		element.value = data;
 
 		dispatchEventRelationship(element);
@@ -209,11 +229,11 @@ function calcularDiasPerido(fechaIngreso, periodos) {
  * Get total days antiquity
  * @param {number} antigüedad
  */
-function diasTotalesAntiguedad(antiguedad = 0) {
-	if (String(antiguedad).trim() > 0) {
+function calculateTotalDaysForAntiquity(antiquity = 0) {
+	if (String(antiquity).trim() > 0) {
 		const dataToSend = new FormData();
-		dataToSend.append('setOpcion', 'diasTotalesAntiguedad');
-		dataToSend.append('setAntiguedad', antiguedad);
+		dataToSend.append('getRequest', 'totalDaysForAntiquity');
+		dataToSend.append('setAntiquity', antiquity);
 
 		fetch(controllerPath, {
 			method: 'POST',
@@ -221,22 +241,22 @@ function diasTotalesAntiguedad(antiguedad = 0) {
 		})
 		.then(returnResponse)
 		.then(function(data) {
-			document.getElementById('diasTotalesAntiguedad').value = data;
+			document.getElementById('totalDaysForAntiquity').value = data;
 		})
 		.catch(function(error) {
-			document.getElementById('diasTotalesAntiguedad').value = 0;
+			document.getElementById('totalDaysForAntiquity').value = 0;
 			console.error(error);
 		});
 	} else {
-		document.getElementById('diasTotalesAntiguedad').value = 0;
+		document.getElementById('totalDaysForAntiquity').value = 0;
 	}
 } // end of function
 
-function listarPeriodosDisponibles(fechaIngreso = '') {
-	if (fechaIngreso.trim() !== '') {
+function listAvailablePeriods(dateOfAdmission = '') {
+	if (dateOfAdmission.trim() !== '') {
 		const dataToSend = new FormData();
-		dataToSend.append('setOpcion', 'listarPeriodosDisponibles');
-		dataToSend.append('setFechaIngreso', fechaIngreso);
+		dataToSend.append('getRequest', 'availablePeriods');
+		dataToSend.append('setDateOfAdmission', dateOfAdmission);
 
 		fetch(controllerPath, {
 			method: 'POST',
@@ -245,28 +265,28 @@ function listarPeriodosDisponibles(fechaIngreso = '') {
 		.then(returnResponse)
 		.then(function(data) {
 			let isDisabled = false;
-			// primer item de las opciones
-			document.querySelectorAll('#periodos option:not([value=""])').forEach(function(element) {
-				element.remove(); // limpia los option del select
+			// first item of the options
+			document.querySelectorAll('#periodsList option:not([value=""])').forEach(function(element) {
+				element.remove(); // clean select options
 			});
 
-			const selectElement = document.getElementById('periodos');
+			const selectElement = document.getElementById('periodsList');
 			if (data && data.length > 0) {
-				for (var i = 0; i < data.length; i++) {
-					// agrega los nuevos option al select
+				data.forEach(function(optionItem) {
+					// add new options to select
 					const optionElement = document.createElement('option');
-					optionElement.value = data[i];
-					optionElement.text = 'Periodo ' + data[i];
+					optionElement.value = optionItem;
+					optionElement.text = 'Period ' + optionItem;
 					selectElement.appendChild(optionElement);
-				}
+				});
 				isDisabled = true;
 			} else {
 				const optionElement = document.createElement('option');
 				optionElement.value = '0';
-				optionElement.text = 'Sin periodos disponibles';
+				optionElement.text = 'No periods available';
 				selectElement.appendChild(optionElement);
 			}
-			document.querySelectorAll('#periodos option[value=""]').forEach(function(element) {
+			document.querySelectorAll('#periodsList option[value=""]').forEach(function(element) {
 				element.disabled = isDisabled;
 				element.selected = false;
 			});
@@ -277,15 +297,15 @@ function listarPeriodosDisponibles(fechaIngreso = '') {
 	}
 } // end of function
 
-function endDate(startDate, diasHabiles) {
-	if (startDate === '' || diasHabiles === '') {
+function endDate(holidayStartDate, businessDays) {
+	if (holidayStartDate === '' || businessDays === '') {
 		return;
 	}
 
 	const dataToSend = new FormData();
-	dataToSend.append('setOpcion', 'calcularFechaFin');
-	dataToSend.append('setFechaInicio', startDate);
-	dataToSend.append('setDiasHabiles', diasHabiles);
+	dataToSend.append('getRequest', 'calculateEndDate');
+	dataToSend.append('setHolidayStartDate', holidayStartDate);
+	dataToSend.append('setBusinessDays', businessDays);
 
 	fetch(controllerPath, {
 		method: 'POST',
@@ -296,8 +316,8 @@ function endDate(startDate, diasHabiles) {
 		const endDate = data.endDate.replace(/[/]/g, '-');
 		const incorporationDate = data.incorporationDate.replace(/[/]/g, '-');
 
-		document.getElementById('fechaFin').value = endDate;
-		document.getElementById('fechaIncorporacion').value = incorporationDate;
+		document.getElementById('holidayEndDate').value = endDate;
+		document.getElementById('incorporationDate').value = incorporationDate;
 	})
 	.catch(function(error) {
 		console.error(error);
