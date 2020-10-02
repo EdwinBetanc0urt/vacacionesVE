@@ -52,26 +52,22 @@ switch ($opcion) {
 
 function calcularAntiguedad() {
 	$antiguedad = vacacionesVE::_getAntiguedad($_POST["setFechaIngreso"]);
-	echo $antiguedad;
+	printValues($antiguedad);
 }
 
 function calcularDiasPeriodo() {
 	$diasPeriodo = vacacionesVE::_getDiasPeriodos($_POST["setFechaIngreso"], $_POST["setPeriodos"]);
-	echo $diasPeriodo;
+	printValues($diasPeriodo);
 }
 
 function calcularDiasTotalesAntiguedad() {
 	$diasAntiguedad = vacacionesVE::_getDiasTotalesAntiguedad($_POST["setAntiguedad"]);
-	echo $diasAntiguedad;
+	printValues($diasAntiguedad);
 }
 
 function listarPeriodosTotales() {
 	$periodos = vacacionesVE::_getPeriodosAntiguedad($_POST["setFechaIngreso"]);
-
-	header('Cache-Control: no-cache, must-revalidate');
-	header('Expires: Mon, 26 Jul 2000 05:00:00 GMT');
-	header('Content-type: application/json');
-	echo json_encode($periodos);
+	printValues($periodos);
 }
 
 function listarPeriodosDisponibles() {
@@ -83,15 +79,25 @@ function listarPeriodosDisponibles() {
 	$periodosNoUtilizados = array_diff($todosPeriodos, $periodosUtilizados);
 	$periodosDisponibles = array_slice($periodosNoUtilizados, 0, vacacionesVE::$maxPeriodos);
 
-	header('Cache-Control: no-cache, must-revalidate');
-	header('Expires: Mon, 26 Jul 2000 05:00:00 GMT');
-	header('Content-type: application/json');
-	echo json_encode($periodosDisponibles);
+	printValues($periodosDisponibles);
 }
 
 
 function calcularFechaFin() {
-	$fechaFin = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"]);
-	echo vacacionesVE::getFechaFormato($fechaFin);
-	// echo $fechaFin;
+	$endDate = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"]);
+	$incorporationDate = vacacionesVE::getFechaFinal($_POST["setFechaInicio"], $_POST["setDiasHabiles"] + 1);
+	$sendValues = array(
+		"endDate" => $endDate,
+		"incorporationDate" => $incorporationDate
+	);
+
+	printValues($sendValues);
+}
+
+function printValues($valueToPrint) {
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 2000 05:00:00 GMT');
+	header('Content-type: application/json');
+
+	echo json_encode($valueToPrint);
 }

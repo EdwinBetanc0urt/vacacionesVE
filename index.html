@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>
+      VacacionesVE, Calculo de vacaciones para Venezuela
+    </title>
+    <meta charset="UTF-8">
+    <meta name="title" content="EdwinBetanc0urt GitHub Pages">
+    <meta name="description" content="EdwinBetanc0urt GitHub Pages">
+    <link rel="stylesheet" href="public/bootstrap/css/bootstrap.min.css">
+  </head>
+  <body>
+    <form id="vacacionesVE" name="vacacionesVE" method="post" action="index.php">
+      <div class="container">
+        <br />
+        <h1>VacacionesVE, Calculo de vacaciones para Venezuela.</h1>
+        <br />
+
+        <div class="form-row align-items-center">
+          <div class="row">
+            <div class="form-group col-4 col-sm-4">
+              <label for="fechaIngreso">Fecha Ingreso</label>
+              <input type="date" id="fechaIngreso" class="form-control" />
+            </div>
+            <div class="form-group col-4 col-sm-4">
+              <label for="antiguedad">Antigüedad (años)</label>
+              <input type="number" id="antiguedad" class="form-control" readonly />
+            </div>
+            <div class="form-group col-4 col-sm-4">
+              <label for="diasTotalesAntiguedad">Días Totales (por antigüedad)</label>
+              <input type="number" id="diasTotalesAntiguedad" class="form-control" readonly />
+            </div>
+
+            <div class="form-group col-4">
+              <label for="fechaInicio">Fecha Inicio Vacacional</label>
+              <input type="date" id="fechaInicio" class="form-control" />
+            </div>
+            <div class="form-group col-4">
+              <label for="fechaFin">Fecha Fin Vacacional</label>
+              <input type="date" id="fechaFin" class="form-control" readonly />
+            </div>
+            <div class="form-group col-4">
+              <label for="fechaIncorporacion">Fecha de Incoporación</label>
+              <input type="date" id="fechaIncorporacion" class="form-control" readonly />
+            </div>
+
+            <div class="form-group col-6">
+              <label for="periodos">
+                Periodos a seleccionar para el disfrute vacacional (máximo 2)
+              </label>
+              <select id="periodos" class="form-control" multiple>
+                <option value="">Seleccione una opción</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="diasPeriodo">Días en el periodo:</label>
+              <input type="number" id="diasPeriodo" class="form-control" readonly />
+            </div>
+          </div>
+
+          <br /><br />
+        </div>
+      </div>
+    </form>
+
+    <script src="public/example.js"></script>
+  </body>
+</html>

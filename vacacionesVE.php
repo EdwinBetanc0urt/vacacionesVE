@@ -7,9 +7,8 @@ require('utils.php');
  *
  * Clase PHP para obtener los cálculos relacionados a vacaciones
  * @author: Edwin Betancourt <EdwinBetanc0urt@outlook.com>
- * @license: GNU GPL v3,  Licencia Pública General de GNU 3.
- * @license: CC BY-SA, Creative Commons Atribución - CompartirIgual (CC BY-SA) 4.0 Internacional.
- * @category Librería.
+ * @license: MIT License.
+ * @category library.
  * @package: vacacionesVE.php
  * @since: v0.3.
  * @version: 0.7.
@@ -85,6 +84,7 @@ class vacacionesVE
 		unset($objFecha_Ingreso, $objFecha_Periodo, $objAnos);
 		return $liAntiguedad;
 	} // cierre de la función
+
 	public function getAntiguedad($fechaIngreso = "", $fechaPeriodo = "")
 	{
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
@@ -104,10 +104,11 @@ class vacacionesVE
 		//$liDiasAntiguedad = $this->atrDiasVacaciones + ($piAntiguedad - 1);
 		$liDiasAntiguedad = 15 + ($piAntiguedad - 1);
 		if ($liDiasAntiguedad > 30) {
-			$liDiasAntiguedad = 30;
+			return 30;
 		}
 		return $liDiasAntiguedad;
 	} // cierre de la función
+
 	public function getDiasVacacionesAntiguedad($piAntiguedad = "") {
 		if (trim($piAntiguedad) == "") {
 			$piAntiguedad = $this->getAntiguedad($this->atrFechaIngreso);
@@ -117,7 +118,7 @@ class vacacionesVE
 
 
 	/**
-	 * Calcula la cantidad total acumulada de dias segun la antiguedad
+	 * Calcula la cantidad total acumulada de días según la antigüedad
 	 */
 	static public function _getDiasTotalesAntiguedad($antiguedad)
 	{
@@ -130,6 +131,7 @@ class vacacionesVE
 
 		return $diasAcumuladoAntiguedad;
 	} // cierre de la función
+
 	public function getDiasTotalesAntiguedad($antiguedad = "") {
 		if ($antiguedad == NULL || $antiguedad == "") {
 			$antiguedad = $this->atrAntiguedad;
@@ -146,7 +148,12 @@ class vacacionesVE
 
 		if (! is_array($paPeriodos)) {
 			// separa la palabra en cada quien y convierte el string en arreglo
-			$paPeriodos = explode("-", $paPeriodos);
+			if (strpos($paPeriodos, "/")) {
+				$paPeriodos = explode("/", $paPeriodos);
+			}
+			else {
+				$paPeriodos = explode("-", $paPeriodos);
+			}
 		}
 
 		$liCont = 1;
@@ -173,6 +180,7 @@ class vacacionesVE
 		$arrRetorno["dias_vacaciones"] = $lsVacaciones;
 		return $arrRetorno;
 	} // cierre de la función
+
 	public function getDetalleVacacionesPeriodo(
 		$fechaIngreso = "", $periodos = array()
 	)
@@ -189,6 +197,15 @@ class vacacionesVE
 		$diasVacaciones = 0;
 		$todosPeriodos = self::_getPeriodosAntiguedad($fechaIngreso);
 
+		if (! is_array($periodos)) {
+			// separa la palabra en cada quien y convierte el string en arreglo
+			$periodos = explode(",", $periodos);
+		}
+		if (! is_array($periodos)) {
+			// separa la palabra en cada quien y convierte el string en arreglo
+			$periodos = explode(" ", $periodos);
+		}
+
 		foreach ($todosPeriodos as $key => $periodoItem) {
 			if (in_array($periodoItem, $periodos)) {
 				$diasVacaciones = self::_getDiasVacacionesAntiguedad($antiguedad) + $diasVacaciones;
@@ -197,6 +214,7 @@ class vacacionesVE
 		}
 		return $diasVacaciones;
 	}
+
 	public function getDiasPeriodos($fechaIngreso = "", $periodos) {
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
 			$fechaIngreso = $this->atrFechaIngreso;
@@ -217,6 +235,7 @@ class vacacionesVE
 		}
 		return $periodos;
 	} // cierre de la función
+
 	public function getPeriodosAntiguedad($fechaIngreso = "") {
 		if (trim($fechaIngreso) == "" || $fechaIngreso == NULL) {
 			$fechaIngreso = $this->atrFechaIngreso;
